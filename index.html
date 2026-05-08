@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next-Gen Browser | Shakil</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --chrome-bg: #000000;
+            --chrome-toolbar: #1a1a1a;
+            --chrome-tab: #2a2a2a;
+            --accent: #8ab4f8;
+            --text: #ffffff;
+            --border: #333333;
+            --success: #4caf50;
+            --danger: #ff5252;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; }
+        body { background: var(--chrome-bg); color: var(--text); height: 100vh; overflow: hidden; }
+
+        /* --- World Class Intro Animation --- */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .logo-container { width: 120px; height: 120px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .logo-ring { position: absolute; width: 100%; height: 100%; border: 4px solid transparent; border-top-color: var(--accent); border-bottom-color: var(--accent); border-radius: 50%; }
+        .logo-text { font-size: 60px; color: #fff; font-weight: 900; z-index: 2; }
+
+        /* --- Browser Layout --- */
+        #main-app { visibility: hidden; display: flex; flex-direction: column; height: 100vh; }
+
+        .tab-strip { background: #000; padding: 8px 10px 0; display: flex; align-items: flex-end; gap: 5px; }
+        .active-tab { background: var(--chrome-toolbar); padding: 10px 25px; border-radius: 12px 12px 0 0; font-size: 13px; display: flex; align-items: center; gap: 10px; width: 220px; border-top: 1px solid var(--border); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+
+        .chrome-toolbar { background: var(--chrome-toolbar); padding: 8px 14px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+        .nav-icons { display: flex; gap: 15px; color: #fff; }
+        .nav-icons span { cursor: pointer; opacity: 0.8; transition: 0.2s; font-size: 20px; }
+        .nav-icons span:hover { opacity: 1; color: var(--accent); }
+
+        .omnibox { flex: 1; background: #2b2b2b; border-radius: 30px; padding: 6px 18px; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.3s; }
+        .omnibox:focus-within { background: #000; border-color: var(--accent); box-shadow: 0 0 10px rgba(138,180,248,0.2); }
+        #url-input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 14px; }
+
+        .shield-active { color: var(--success); cursor: pointer; transition: 0.3s; }
+        .shield-active:hover { transform: scale(1.1); }
+
+        .action-icons { display: flex; align-items: center; gap: 12px; }
+        .dl-btn-main { color: var(--accent); cursor: pointer; transition: 0.3s; }
+
+        #download-panel { position: fixed; bottom: -120px; left: 0; width: 100%; background: #1a1a1a; border-top: 2px solid var(--accent); padding: 15px 25px; z-index: 10000; transition: 0.5s; box-shadow: 0 -10px 40px rgba(0,0,0,0.9); display: flex; flex-direction: column; gap: 10px; }
+        .dl-active { bottom: 0 !important; }
+        .progress-container { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.2s; }
+
+        .content-area { flex: 1; position: relative; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        #chrome-menu { position: absolute; top: 55px; right: 15px; width: 280px; background: #2b2b2b; border-radius: 12px; padding: 10px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000; display: none; border: 1px solid var(--border); }
+        .menu-row { padding: 10px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .menu-row:hover { background: #3c3c3c; }
+        .menu-row span { color: #aaa; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <div class="logo-container"><div class="logo-ring"></div><div class="logo-text">N</div></div>
+        <h1 id="brand-name" style="margin-top:20px; letter-spacing:10px; opacity:0; font-weight: 200;">NEXT-GEN</h1>
+        <p id="dev-credit" style="color:var(--accent); margin-top:10px; opacity:0; letter-spacing:4px; font-size:12px;">DEVELOPED BY SHAKIL</p>
+    </div>
+
+    <div id="main-app">
+        <div class="tab-strip">
+            <div class="active-tab">
+                <img src="https://www.google.com/favicon.ico" width="16">
+                <span id="tab-title">New Tab - Google</span>
+                <span class="material-icons-round" style="margin-left:auto; font-size:16px;">close</span>
+            </div>
+            <span class="material-icons-round" style="padding: 5px; cursor: pointer; color: #888;">add</span>
+        </div>
+
+        <div class="chrome-toolbar">
+            <div class="nav-icons">
+                <span class="material-icons-round" onclick="history.back()">arrow_back</span>
+                <span class="material-icons-round" onclick="history.forward()">arrow_forward</span>
+                <span class="material-icons-round" onclick="reloadFrame()">refresh</span>
+            </div>
+
+            <div class="omnibox">
+                <span class="material-icons-round shield-active" id="adblock-icon" title="Ad-Blocker Active">security</span>
+                <input type="text" id="url-input" placeholder="Search Google or type a URL" onkeydown="if(event.key==='Enter') loadPage()">
+                <span class="material-icons-round dl-btn-main" onclick="triggerDownload()" title="Download File">download_for_offline</span>
+            </div>
+
+            <div class="action-icons">
+                <span class="material-icons-round" style="cursor: pointer;">extension</span>
+                <span class="material-icons-round" onclick="toggleMenu()" style="cursor: pointer;">more_vert</span>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <iframe id="browser-engine" src="https://www.google.com/search?igu=1"></iframe>
+            <div id="chrome-menu">
+                <div class="menu-row" onclick="toggleAdBlock()"><span class="material-icons-round">block</span> Ad-Blocker: <b id="ad-status">ON</b></div>
+                <hr style="border: 0; border-top: 1px solid #444; margin: 8px 0;">
+                <div class="menu-row" onclick="triggerDownload()"><span class="material-icons-round">download</span> Downloads</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="download-panel">
+        <div class="dl-info" style="display:flex; justify-content:space-between;">
+            <span id="dl-name" style="color: var(--accent); font-weight: bold;">Downloading...</span>
+            <span id="dl-status">0%</span>
+        </div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
+    </div>
+
+    <script>
+        const introTl = gsap.timeline();
+        introTl.to(".logo-ring", { rotation: 360, duration: 2, repeat: -1, ease: "linear" });
+        introTl.to("#brand-name", { opacity: 1, y: -15, duration: 1 }, 0.5);
+        introTl.to("#dev-credit", { opacity: 1, y: -10, duration: 1 }, 1);
+        
+        window.onload = () => {
+            setTimeout(() => {
+                gsap.to("#intro-overlay", { opacity: 0, duration: 1, onComplete: () => {
+                    document.getElementById('intro-overlay').style.display = 'none';
+                    document.getElementById('main-app').style.visibility = 'visible';
+                }});
+            }, 3500);
+        };
+
+        const frame = document.getElementById('browser-engine');
+        const input = document.getElementById('url-input');
+        const menu = document.getElementById('chrome-menu');
+        
+        let adBlockActive = true;
+        function toggleAdBlock() {
+            adBlockActive = !adBlockActive;
+            document.getElementById('ad-status').innerText = adBlockActive ? "ON" : "OFF";
+            document.getElementById('adblock-icon').style.color = adBlockActive ? "var(--success)" : "#888";
+            reloadFrame();
+        }
+
+        function loadPage() {
+            let val = input.value.trim();
+            if(!val) return;
+            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : 'https://www.google.com/search?q=' + encodeURIComponent(val) + '&igu=1';
+            frame.src = url;
+            document.getElementById('tab-title').innerText = val;
+            menu.style.display = 'none';
+        }
+
+        function reloadFrame() { frame.src = frame.src; }
+        function toggleMenu() { menu.style.display = (menu.style.display === 'block') ? 'none' : 'block'; }
+        
+        function triggerDownload() {
+            if(frame.src.includes('google.com')) { alert("Nothing to download here."); return; }
+            const dlPanel = document.getElementById('download-panel');
+            dlPanel.classList.add('dl-active');
+            let progress = 0;
+            let speed = setInterval(() => {
+                progress += 5;
+                if(progress > 100) { clearInterval(speed); dlPanel.classList.remove('dl-active'); alert("Saved!"); }
+                document.getElementById('progress-bar').style.width = progress + "%";
+                document.getElementById('dl-status').innerText = progress + "%";
+            }, 200);
+        }
+
+        window.onclick = (e) => { if(!e.target.matches('.material-icons-round')) menu.style.display = 'none'; }
+    </script>
+</body>
+</html>
