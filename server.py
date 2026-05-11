@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -23,6 +24,14 @@ def proxy():
     except Exception as e:
         return f"Error: {str(e)}", 500
 
+# হোম রুট: এটি আপনার index.html ফাইলটি লোড করবে
+@app.route('/')
+def index():
+    from flask import render_template
+    return render_template('index.html')
+
 if __name__ == '__main__':
-    # আপনার পিসির লোকাল হোস্ট পোর্টে সার্ভারটি চলবে
-    app.run(debug=True, port=5000)
+    # অনলাইন সার্ভারের পোর্ট কনফিগারেশন (Render/Railway এর জন্য জরুরি)
+    port = int(os.environ.get('PORT', 5000))
+    # host='0.0.0.0' নিশ্চিত করে যে এটি বাইরের নেটওয়ার্ক থেকে অ্যাক্সেস করা যাবে
+    app.run(host='0.0.0.0', port=port)
