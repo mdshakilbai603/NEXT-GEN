@@ -19,6 +19,7 @@ def proxy():
         
         resp = requests.get(target_url, headers=headers, stream=True, timeout=10)
         
+        # হেডার ক্লিনআপ যা ব্রাউজারে সমস্যা করতে পারে
         excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
         resp_headers = [(name, value) for (name, value) in resp.raw.headers.items()
                         if name.lower() not in excluded_headers]
@@ -30,6 +31,7 @@ def proxy():
 # হোম পেজ লোড করার জন্য রুট
 @app.route('/')
 def index():
+    # এটি আপনার templates/index.html ফাইলটি লোড করবে
     return render_template('index.html')
 
 if __name__ == '__main__':
