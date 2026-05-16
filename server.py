@@ -35,6 +35,6 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # Render-এর পোর্টের সাথে মিল রেখে রান করা
+    # Render-এর পোর্টের সাথে মিল রেখে রান করা (Port Binding সমস্যা দূর করবে)
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
